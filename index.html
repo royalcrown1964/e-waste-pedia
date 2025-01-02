@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz and Chatbot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f4f7fc, #3498db, #9b59b6); /* Gradient mix */
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #2c3e50;
+    }
+    .hidden {
+      display: none;
+    }
+    .quiz-container, .result-section {
+      width: 80%;
+      max-width: 700px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+    button {
+      background-color: #34d0db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #1e6391;
+    }
+    .question {
+      margin-bottom: 20px;
+    }
+    .question p {
+      font-weight: 500;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+    .question label {
+      display: block;
+      padding: 8px;
+      background-color: #ecf0f1;
+      border-radius: 5px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    .question label:hover {
+      background-color: #bdc3c7;
+    }
+    .result-section p {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .result-section .corrections {
+      background: #f9ebcc;
+      padding: 15px;
+      border-radius: 5px;
+    }
+    .chatbot-icon {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      width: 60px;
+      height: 60px;
+      background-color: #3498db;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .chatbot-window {
+      position: fixed;
+      bottom: 90px;
+      left: 20px;
+      width: 320px;
+      height: 450px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: none;
+    }
+    .chatbot-window iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome to the E-Waste Pedia</h1>
+    <p>Watch the video, answer the questions, and check your score! You can use the chatbot located on the bottom left of the website to clear doubts.</p>
+    <button id="start-quiz-btn">Start Quiz</button>
+  </header>
+
+  <div id="video-section">
+    <video width="100%" controls>
+      <source src="your-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <div id="quiz-section" class="quiz-container hidden">
+    <h2>Quiz: E-Waste Awareness</h2>
+    <div id="quiz-container"></div>
+    <button id="submit-quiz-btn">Submit Quiz</button>
+  </div>
+
+  <div id="result-section" class="result-section hidden">
+    <p id="score"></p>
+    <div id="corrections" class="corrections"></div>
+  </div>
+
+  <!-- Chatbot -->
+  <div id="chatbot-icon" class="chatbot-icon">💬</div>
+  <div id="chatbot-window" class="chatbot-window">
+    <iframe id="chatbot-iframe" src="" frameborder="0"></iframe>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const startQuizBtn = document.getElementById("start-quiz-btn");
+      const quizSection = document.getElementById("quiz-section");
+      const resultSection = document.getElementById("result-section");
+      const quizContainer = document.getElementById("quiz-container");
+      const submitQuizBtn = document.getElementById("submit-quiz-btn");
+      const scoreElement = document.getElementById("score");
+      const correctionsElement = document.getElementById("corrections");
+      const chatbotIcon = document.getElementById("chatbot-icon");
+      const chatbotWindow = document.getElementById("chatbot-window");
+      const chatbotIframe = document.getElementById("chatbot-iframe");
+
+      // Quiz data (25 questions about E-Waste)
+      const questions = [
+        { question: "What is E-Waste?", options: ["Electronic waste", "Electric waste", "Electronics", "None of these"], correct: 0 },
+        { question: "How can we dispose of E-Waste safely?", options: ["Burn it", "Recycle it", "Throw it in a landfill", "Ignore it"], correct: 1 },
+        { question: "What can be recycled from E-Waste?", options: ["Plastic", "Gold", "Batteries", "All of the above"], correct: 3 },
+        { question: "Why is E-Waste harmful?", options: ["It pollutes the environment", "It releases harmful chemicals", "It can cause health issues", "All of the above"], correct: 3 },
+        { question: "What is the main component of E-Waste?", options: ["Metals", "Plastic", "Glass", "All of the above"], correct: 3 },
+        { question: "Which of the following is NOT a form of E-Waste?", options: ["Old TVs", "Batteries", "Plastic bottles", "Old computers"], correct: 2 },
+        { question: "How often should you dispose of E-Waste?", options: ["Every year", "When it breaks down", "When you upgrade", "All of the above"], correct: 3 },
+        { question: "Which of the following is the most common hazardous substance found in E-Waste?", options: ["Lead", "Plastic", "Mercury", "All of the above"], correct: 0 },
+        { question: "What is the best way to reduce E-Waste?", options: ["Buy new electronics often", "Recycle old electronics", "Burn electronics", "Throw electronics in landfills"], correct: 1 },
+        { question: "Which country has the highest per capita generation of E-Waste?", options: ["India", "USA", "China", "Germany"], correct: 1 },
+        { question: "What is the first step in recycling E-Waste?", options: ["Sorting", "Cleaning", "Shredding", "Disposal"], correct: 0 },
+        { question: "What materials from E-Waste can be reused?", options: ["Gold", "Silver", "Copper", "All of the above"], correct: 3 },
+        { question: "What are the environmental impacts of improper E-Waste disposal?", options: ["Soil contamination", "Water pollution", "Air pollution", "All of the above"], correct: 3 },
+        { question: "What is the lifespan of most electronics?", options: ["1-2 years", "3-5 years", "6-10 years", "11-15 years"], correct: 1 },
+        { question: "Which of the following is NOT a type of E-Waste?", options: ["Old mobile phones", "Old fridges", "Plastic bags", "Old computers"], correct: 2 },
+        { question: "How can you reduce your personal E-Waste?", options: ["Recycle electronics", "Donate old electronics", "Buy refurbished electronics", "All of the above"], correct: 3 },
+        { question: "What is the role of government in managing E-Waste?", options: ["Regulate E-Waste disposal", "Provide recycling facilities", "Educate the public", "All of the above"], correct: 3 },
+        { question: "Which of the following electronics contains harmful substances?", options: ["Old TVs", "Old microwaves", "Old computers", "All of the above"], correct: 3 },
+        { question: "How can businesses contribute to reducing E-Waste?", options: ["Recycling electronics", "Upgrading electronics less frequently", "Donating old electronics", "All of the above"], correct: 3 },
+        { question: "What is the impact of E-Waste on human health?", options: ["Respiratory issues", "Skin diseases", "Cancer", "All of the above"], correct: 3 },
+        { question: "What is the best practice for E-Waste disposal?", options: ["Proper recycling", "Burning", "Burying", "Throwing in a landfill"], correct: 0 },
+        { question: "Why is it important to recycle E-Waste?", options: ["Reduce pollution", "Recover valuable materials", "Prevent health risks", "All of the above"], correct: 3 },
+        { question: "What should you do with old batteries?", options: ["Throw them away", "Recycle them", "Burn them", "Ignore them"], correct: 1 },
+        { question: "Which of the following is an effect of improper E-Waste disposal?", options: ["Soil contamination", "Air pollution", "Water contamination", "All of the above"], correct: 3 },
+        { question: "Which of these countries has enacted laws to regulate E-Waste?", options: ["India", "China", "USA", "All of the above"], correct: 3 }
+      ];
+
+      function loadQuestions() {
+        quizContainer.innerHTML = '';
+        questions.forEach((q, index) => {
+          const questionElement = document.createElement('div');
+          questionElement.classList.add('question');
+          questionElement.innerHTML = `
+            <p>${index + 1}. ${q.question}</p>
+            ${q.options.map((option, i) => `
+              <label>
+                <input type="radio" name="q${index}" value="${i}">
+                ${option}
+              </label>
+            `).join('')}
+          `;
+          quizContainer.appendChild(questionElement);
+        });
+      }
+
+      function showResult() {
+        let score = 0;
+        let corrections = '';
+        questions.forEach((q, index) => {
+          const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+          if (selectedOption && parseInt(selectedOption.value) === q.correct) {
+            score++;
+          } else {
+            corrections += `<p>Question ${index + 1}: Correct answer is "${q.options[q.correct]}"</p>`;
+          }
+        });
+
+        scoreElement.textContent = `Your score: ${score} out of ${questions.length}`;
+        correctionsElement.innerHTML = corrections;
+        resultSection.classList.remove('hidden');
+        quizSection.classList.add('hidden');
+      }
+
+      startQuizBtn.addEventListener('click', () => {
+        document.getElementById("video-section").classList.add("hidden");
+        quizSection.classList.remove('hidden');
+        loadQuestions();
+      });
+
+      submitQuizBtn.addEventListener('click', showResult);
+
+      // Chatbot functionality
+      chatbotIcon.addEventListener("click", function() {
+        chatbotWindow.style.display = chatbotWindow.style.display === "none" ? "block" : "none";
+        chatbotIframe.src = chatbotWindow.style.display === "block" ? "https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/01/02/06/20250102062021-KVX0PB05.json" : "";
+      });
+    });
+  </script>
+</body>
+</html>
