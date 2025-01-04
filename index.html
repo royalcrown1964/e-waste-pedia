@@ -24,9 +24,11 @@
       margin-bottom: 40px;
       color: #2c3e50;
     }
+
     .hidden {
       display: none;
     }
+
     .quiz-container, .result-section {
       width: 80%;
       max-width: 700px;
@@ -36,6 +38,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
     }
+
     button {
       background-color: #34d0db;
       color: #fff;
@@ -46,17 +49,21 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #1e6391;
     }
+
     .question {
       margin-bottom: 20px;
     }
+
     .question p {
       font-weight: 500;
       font-size: 16px;
       margin-bottom: 10px;
     }
+
     .question label {
       display: block;
       padding: 8px;
@@ -66,19 +73,24 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
+
     .question label:hover {
       background-color: #bdc3c7;
     }
+
     .result-section p {
       font-size: 20px;
       font-weight: bold;
       margin-bottom: 20px;
     }
+
     .result-section .corrections {
       background: #f9ebcc;
       padding: 15px;
       border-radius: 5px;
     }
+
+    /* Chatbot Styles */
     .chatbot-icon {
       position: fixed;
       bottom: 20px;
@@ -93,11 +105,13 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
     }
+
     .chatbot-bubble {
       position: absolute;
-      bottom: 80px;
-      left: 10px;
+      bottom: 80px; /* Positioned above the chatbot icon */
+      left: 10px; /* Align it nicely above the icon */
       background-color: #fff;
       color: #333;
       font-size: 14px;
@@ -105,7 +119,10 @@
       border-radius: 8px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       white-space: nowrap;
+      display: block; /* Ensure it is visible */
+      z-index: 1001;
     }
+
     .chatbot-window {
       position: fixed;
       bottom: 90px;
@@ -117,6 +134,7 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       display: none;
     }
+
     .chatbot-window iframe {
       width: 100%;
       height: 100%;
