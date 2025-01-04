@@ -7,17 +7,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
   <style>
     body {
-  font-family: 'Poppins', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(135deg, #f4f7fc, #3498db, #9b59b6); /* Gradient mix */
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  flex-direction: column;
-}
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f4f7fc, #3498db, #9b59b6); /* Gradient mix */
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+    }
 
     header {
       text-align: center;
@@ -94,6 +94,18 @@
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
+    .chatbot-bubble {
+      position: absolute;
+      bottom: 80px;
+      left: 10px;
+      background-color: #fff;
+      color: #333;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      white-space: nowrap;
+    }
     .chatbot-window {
       position: fixed;
       bottom: 90px;
@@ -139,7 +151,10 @@
   </div>
 
   <!-- Chatbot -->
-  <div id="chatbot-icon" class="chatbot-icon">💬</div>
+  <div id="chatbot-icon" class="chatbot-icon">
+    💬
+    <div class="chatbot-bubble">Any doubts? Use me!</div>
+  </div>
   <div id="chatbot-window" class="chatbot-window">
     <iframe id="chatbot-iframe" src="" frameborder="0"></iframe>
   </div>
@@ -157,84 +172,57 @@
       const chatbotWindow = document.getElementById("chatbot-window");
       const chatbotIframe = document.getElementById("chatbot-iframe");
 
-      // Quiz data (25 questions about E-Waste)
+      // Add event listener for chatbot icon click
+      chatbotIcon.addEventListener("click", function() {
+        chatbotWindow.style.display = chatbotWindow.style.display === "none" || chatbotWindow.style.display === "" ? "block" : "none";
+      });
+
+      // Quiz data
       const questions = [
         { question: "What is E-Waste?", options: ["Electronic waste", "Electric waste", "Electronics", "None of these"], correct: 0 },
         { question: "How can we dispose of E-Waste safely?", options: ["Burn it", "Recycle it", "Throw it in a landfill", "Ignore it"], correct: 1 },
-        { question: "What can be recycled from E-Waste?", options: ["Plastic", "Gold", "Batteries", "All of the above"], correct: 3 },
-        { question: "Why is E-Waste harmful?", options: ["It pollutes the environment", "It releases harmful chemicals", "It can cause health issues", "All of the above"], correct: 3 },
-        { question: "What is the main component of E-Waste?", options: ["Metals", "Plastic", "Glass", "All of the above"], correct: 3 },
-        { question: "Which of the following is NOT a form of E-Waste?", options: ["Old TVs", "Batteries", "Plastic bottles", "Old computers"], correct: 2 },
-        { question: "How often should you dispose of E-Waste?", options: ["Every year", "When it breaks down", "When you upgrade", "All of the above"], correct: 3 },
-        { question: "Which of the following is the most common hazardous substance found in E-Waste?", options: ["Lead", "Plastic", "Mercury", "All of the above"], correct: 0 },
-        { question: "What is the best way to reduce E-Waste?", options: ["Buy new electronics often", "Recycle old electronics", "Burn electronics", "Throw electronics in landfills"], correct: 1 },
-        { question: "Which country has the highest per capita generation of E-Waste?", options: ["India", "USA", "China", "Germany"], correct: 1 },
-        { question: "What is the first step in recycling E-Waste?", options: ["Sorting", "Cleaning", "Shredding", "Disposal"], correct: 0 },
-        { question: "What materials from E-Waste can be reused?", options: ["Gold", "Silver", "Copper", "All of the above"], correct: 3 },
-        { question: "What are the environmental impacts of improper E-Waste disposal?", options: ["Soil contamination", "Water pollution", "Air pollution", "All of the above"], correct: 3 },
-        { question: "What is the lifespan of most electronics?", options: ["1-2 years", "3-5 years", "6-10 years", "11-15 years"], correct: 1 },
-        { question: "Which of the following is NOT a type of E-Waste?", options: ["Old mobile phones", "Old fridges", "Plastic bags", "Old computers"], correct: 2 },
-        { question: "How can you reduce your personal E-Waste?", options: ["Recycle electronics", "Donate old electronics", "Buy refurbished electronics", "All of the above"], correct: 3 },
-        { question: "What is the role of government in managing E-Waste?", options: ["Regulate E-Waste disposal", "Provide recycling facilities", "Educate the public", "All of the above"], correct: 3 },
-        { question: "Which of the following electronics contains harmful substances?", options: ["Old TVs", "Old microwaves", "Old computers", "All of the above"], correct: 3 },
-        { question: "How can businesses contribute to reducing E-Waste?", options: ["Recycling electronics", "Upgrading electronics less frequently", "Donating old electronics", "All of the above"], correct: 3 },
-        { question: "What is the impact of E-Waste on human health?", options: ["Respiratory issues", "Skin diseases", "Cancer", "All of the above"], correct: 3 },
-        { question: "What is the best practice for E-Waste disposal?", options: ["Proper recycling", "Burning", "Burying", "Throwing in a landfill"], correct: 0 },
-        { question: "Why is it important to recycle E-Waste?", options: ["Reduce pollution", "Recover valuable materials", "Prevent health risks", "All of the above"], correct: 3 },
-        { question: "What should you do with old batteries?", options: ["Throw them away", "Recycle them", "Burn them", "Ignore them"], correct: 1 },
-        { question: "Which of the following is an effect of improper E-Waste disposal?", options: ["Soil contamination", "Air pollution", "Water contamination", "All of the above"], correct: 3 },
-        { question: "Which of these countries has enacted laws to regulate E-Waste?", options: ["India", "China", "USA", "All of the above"], correct: 3 }
+        // Add more questions as required
       ];
 
-      function loadQuestions() {
-        quizContainer.innerHTML = '';
-        questions.forEach((q, index) => {
-          const questionElement = document.createElement('div');
-          questionElement.classList.add('question');
-          questionElement.innerHTML = `
-            <p>${index + 1}. ${q.question}</p>
-            ${q.options.map((option, i) => `
-              <label>
-                <input type="radio" name="q${index}" value="${i}">
-                ${option}
-              </label>
-            `).join('')}
-          `;
-          quizContainer.appendChild(questionElement);
-        });
-      }
+      startQuizBtn.addEventListener("click", function() {
+        quizSection.classList.remove("hidden");
+        resultSection.classList.add("hidden");
+        renderQuestions();
+      });
 
-      function showResult() {
+      submitQuizBtn.addEventListener("click", function() {
+        const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
         let score = 0;
-        let corrections = '';
-        questions.forEach((q, index) => {
-          const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
-          if (selectedOption && parseInt(selectedOption.value) === q.correct) {
+        let corrections = "";
+        selectedOptions.forEach((option, index) => {
+          if (parseInt(option.value) === questions[index].correct) {
             score++;
           } else {
-            corrections += `<p>Question ${index + 1}: Correct answer is "${q.options[q.correct]}"</p>`;
+            corrections += `<p>Q: ${questions[index].question}<br>Correct Answer: ${questions[index].options[questions[index].correct]}</p>`;
           }
         });
-
-        scoreElement.textContent = `Your score: ${score} out of ${questions.length}`;
+        scoreElement.textContent = `Your score: ${score} / ${questions.length}`;
         correctionsElement.innerHTML = corrections;
-        resultSection.classList.remove('hidden');
-        quizSection.classList.add('hidden');
+        quizSection.classList.add("hidden");
+        resultSection.classList.remove("hidden");
+      });
+
+      function renderQuestions() {
+        quizContainer.innerHTML = "";
+        questions.forEach((q, index) => {
+          const questionHtml = `
+            <div class="question">
+              <p>${q.question}</p>
+              ${q.options.map((opt, i) => `
+                <label>
+                  <input type="radio" name="question${index}" value="${i}"> ${opt}
+                </label>
+              `).join("")}
+            </div>
+          `;
+          quizContainer.innerHTML += questionHtml;
+        });
       }
-
-      startQuizBtn.addEventListener('click', () => {
-        document.getElementById("video-section").classList.add("hidden");
-        quizSection.classList.remove('hidden');
-        loadQuestions();
-      });
-
-      submitQuizBtn.addEventListener('click', showResult);
-
-      // Chatbot functionality
-      chatbotIcon.addEventListener("click", function() {
-        chatbotWindow.style.display = chatbotWindow.style.display === "none" ? "block" : "none";
-        chatbotIframe.src = chatbotWindow.style.display === "block" ? "https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/01/02/06/20250102062021-KVX0PB05.json" : "";
-      });
     });
   </script>
 </body>
