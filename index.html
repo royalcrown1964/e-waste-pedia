@@ -24,11 +24,9 @@
       margin-bottom: 40px;
       color: #2c3e50;
     }
-
     .hidden {
       display: none;
     }
-
     .quiz-container, .result-section {
       width: 80%;
       max-width: 700px;
@@ -38,7 +36,6 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
     }
-
     button {
       background-color: #34d0db;
       color: #fff;
@@ -49,21 +46,17 @@
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
-
     button:hover {
       background-color: #1e6391;
     }
-
     .question {
       margin-bottom: 20px;
     }
-
     .question p {
       font-weight: 500;
       font-size: 16px;
       margin-bottom: 10px;
     }
-
     .question label {
       display: block;
       padding: 8px;
@@ -73,27 +66,22 @@
       cursor: pointer;
       transition: background-color 0.2s ease;
     }
-
     .question label:hover {
       background-color: #bdc3c7;
     }
-
     .result-section p {
       font-size: 20px;
       font-weight: bold;
       margin-bottom: 20px;
     }
-
     .result-section .corrections {
       background: #f9ebcc;
       padding: 15px;
       border-radius: 5px;
     }
-
-    /* Chatbot Styles */
     .chatbot-icon {
       position: fixed;
-      bottom: 20px;
+      bottom: 100px; /* Adjusted position for the chat bubble */
       left: 20px;
       width: 60px;
       height: 60px;
@@ -105,24 +93,20 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
     }
-
     .chatbot-bubble {
-      position: absolute;
-      bottom: 80px; /* Positioned above the chatbot icon */
-      left: 10px; /* Align it nicely above the icon */
-      background-color: #fff;
-      color: #333;
+      position: fixed;
+      bottom: 20px; /* Position at the bottom */
+      left: 20px;
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 25px;
       font-size: 14px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      white-space: nowrap;
-      display: block; /* Ensure it is visible */
-      z-index: 1001;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      display: none; /* Initially hidden */
+      cursor: default;
     }
-
     .chatbot-window {
       position: fixed;
       bottom: 90px;
@@ -134,12 +118,20 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       display: none;
     }
-
     .chatbot-window iframe {
       width: 100%;
       height: 100%;
       border: none;
       border-radius: 10px;
+    }
+
+    .credit-text {
+      position: fixed;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #fff;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -169,13 +161,13 @@
   </div>
 
   <!-- Chatbot -->
-  <div id="chatbot-icon" class="chatbot-icon">
-    💬
-    <div class="chatbot-bubble">Any doubts? Use me!</div>
-  </div>
+  <div id="chatbot-icon" class="chatbot-icon">💬</div>
+  <div id="chatbot-bubble" class="chatbot-bubble">Any doubts? Use me!</div>
   <div id="chatbot-window" class="chatbot-window">
     <iframe id="chatbot-iframe" src="" frameborder="0"></iframe>
   </div>
+
+  <div class="credit-text">Brains behind this project: 1. Sutirtho Ghosh (India) 2. Trisha Gupta (India) 3. Adyashish Biswas (India)</div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -188,59 +180,46 @@
       const correctionsElement = document.getElementById("corrections");
       const chatbotIcon = document.getElementById("chatbot-icon");
       const chatbotWindow = document.getElementById("chatbot-window");
+      const chatbotBubble = document.getElementById("chatbot-bubble");
       const chatbotIframe = document.getElementById("chatbot-iframe");
 
-      // Add event listener for chatbot icon click
-      chatbotIcon.addEventListener("click", function() {
-        chatbotWindow.style.display = chatbotWindow.style.display === "none" || chatbotWindow.style.display === "" ? "block" : "none";
-      });
-
-      // Quiz data
+      // Quiz data (25 questions about E-Waste)
       const questions = [
         { question: "What is E-Waste?", options: ["Electronic waste", "Electric waste", "Electronics", "None of these"], correct: 0 },
         { question: "How can we dispose of E-Waste safely?", options: ["Burn it", "Recycle it", "Throw it in a landfill", "Ignore it"], correct: 1 },
-        // Add more questions as required
+        // Add other quiz questions here
       ];
 
-      startQuizBtn.addEventListener("click", function() {
-        quizSection.classList.remove("hidden");
-        resultSection.classList.add("hidden");
-        renderQuestions();
-      });
-
-      submitQuizBtn.addEventListener("click", function() {
-        const selectedOptions = document.querySelectorAll('input[type="radio"]:checked');
-        let score = 0;
-        let corrections = "";
-        selectedOptions.forEach((option, index) => {
-          if (parseInt(option.value) === questions[index].correct) {
-            score++;
-          } else {
-            corrections += `<p>Q: ${questions[index].question}<br>Correct Answer: ${questions[index].options[questions[index].correct]}</p>`;
-          }
-        });
-        scoreElement.textContent = `Your score: ${score} / ${questions.length}`;
-        correctionsElement.innerHTML = corrections;
-        quizSection.classList.add("hidden");
-        resultSection.classList.remove("hidden");
-      });
-
-      function renderQuestions() {
-        quizContainer.innerHTML = "";
+      function loadQuestions() {
+        quizContainer.innerHTML = '';
         questions.forEach((q, index) => {
-          const questionHtml = `
-            <div class="question">
-              <p>${q.question}</p>
-              ${q.options.map((opt, i) => `
-                <label>
-                  <input type="radio" name="question${index}" value="${i}"> ${opt}
-                </label>
-              `).join("")}
-            </div>
+          const questionElement = document.createElement('div');
+          questionElement.classList.add('question');
+          questionElement.innerHTML = `
+            <p>${q.question}</p>
+            ${q.options.map((option, i) => `
+              <label>
+                <input type="radio" name="question-${index}" value="${i}"> ${option}
+              </label>
+            `).join('')}
           `;
-          quizContainer.innerHTML += questionHtml;
+          quizContainer.appendChild(questionElement);
         });
       }
+
+      function showChatbotWindow() {
+        chatbotWindow.style.display = 'block';
+        chatbotBubble.style.display = 'none';  // Hide the bubble when the chat window opens
+      }
+
+      chatbotIcon.addEventListener("click", showChatbotWindow);
+
+      // Hide chatbot bubble and window after quiz starts
+      startQuizBtn.addEventListener("click", function() {
+        chatbotBubble.style.display = 'none';  // Hide the bubble when the quiz starts
+      });
+      
+      loadQuestions();
     });
   </script>
 </body>
