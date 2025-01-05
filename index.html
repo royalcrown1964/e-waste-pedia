@@ -199,76 +199,63 @@
         { question: "What is the main component of E-Waste?", options: ["Metals", "Plastic", "Glass", "All of the above"], correct: 3 },
         { question: "Which of the following is NOT a form of E-Waste?", options: ["Old TVs", "Batteries", "Plastic bottles", "Old computers"], correct: 2 },
         { question: "How often should you dispose of E-Waste?", options: ["Every year", "When it breaks down", "When you upgrade", "All of the above"], correct: 3 },
-        { question: "Which of the following is the most common hazardous substance found in E-Waste?", options: ["Lead", "Mercury", "Arsenic", "Cadmium"], correct: 0 },
-        { question: "Which country is known for its strict E-Waste management regulations?", options: ["USA", "China", "Japan", "Germany"], correct: 3 },
-        { question: "What is the main environmental threat posed by E-Waste?", options: ["Air pollution", "Water contamination", "Soil degradation", "All of the above"], correct: 3 },
+        { question: "Which of the following is the most common hazardous substance found in E-Waste?", options: ["Lead", "Gold", "Silver", "Copper"], correct: 0 },
+        { question: "What happens if E-Waste is not properly disposed of?", options: ["It can pollute air and water", "It can harm wildlife", "It can harm humans", "All of the above"], correct: 3 },
+        { question: "Which material is often found in old mobile phones?", options: ["Aluminum", "Lithium", "Copper", "Plastic"], correct: 1 },
       ];
 
-      let currentQuestionIndex = 0;
-      let userAnswers = [];
-
-      // Start quiz
-      startQuizBtn.addEventListener("click", function () {
-        startQuizBtn.classList.add("hidden");
-        videoSection.classList.add("hidden");
-        quizSection.classList.remove("hidden");
-        displayQuestion(currentQuestionIndex);
-      });
-
-      // Display question and options
-      function displayQuestion(index) {
-        const question = questions[index];
-        const questionElement = document.createElement("div");
-        questionElement.innerHTML = `
-          <p>${question.question}</p>
-          <div>
-            ${question.options
-              .map(
-                (option, i) =>
-                  `<label><input type="radio" name="question${index}" value="${i}"> ${option}</label><br>`
-              )
-              .join("")}
-          </div>
-        `;
-        quizContainer.innerHTML = "";
-        quizContainer.appendChild(questionElement);
+      function loadQuiz() {
+        questions.forEach((question, index) => {
+          const questionElement = document.createElement("div");
+          questionElement.classList.add("question");
+          questionElement.innerHTML = `
+            <p>${question.question}</p>
+            <div class="options">
+              ${question.options.map((option, i) => `
+                <label>
+                  <input type="radio" name="q${index}" value="${i}">
+                  ${option}
+                </label>
+              `).join('')}
+            </div>
+          `;
+          quizContainer.appendChild(questionElement);
+        });
       }
 
-      // Submit quiz
-      submitQuizBtn.addEventListener("click", function () {
-        const answers = Array.from(document.querySelectorAll("input[type='radio']:checked")).map(
-          (radio) => parseInt(radio.value)
-        );
-        userAnswers = answers;
+      startQuizBtn.addEventListener("click", function () {
+        startQuizBtn.style.display = "none";
+        videoSection.style.display = "none";
+        quizSection.classList.remove("hidden");
+        loadQuiz();
+      });
 
+      submitQuizBtn.addEventListener("click", function () {
         let score = 0;
-        let corrections = [];
+        const corrections = [];
 
         questions.forEach((question, index) => {
-          if (userAnswers[index] === question.correct) {
+          const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+          if (selectedOption && parseInt(selectedOption.value) === question.correct) {
             score++;
           } else {
-            corrections.push(
-              `Question ${index + 1}: Correct answer is "${question.options[question.correct]}" `
-            );
+            corrections.push(`Question ${index + 1}: Correct answer is "${question.options[question.correct]}"`);
           }
         });
 
-        scoreElement.innerHTML = `You scored ${score} out of ${questions.length}`;
-        correctionsElement.innerHTML = corrections.join("<br>");
+        scoreElement.innerText = `Your Score: ${score} out of ${questions.length}`;
+        correctionsElement.innerHTML = corrections.map(correction => `<p>${correction}</p>`).join('');
         quizSection.classList.add("hidden");
         resultSection.classList.remove("hidden");
       });
 
-      // Toggle chatbot
+      // Toggle chatbot window visibility
       chatbotIcon.addEventListener("click", function () {
-        if (chatbotWindow.style.display === "none" || chatbotWindow.style.display === "") {
-          chatbotWindow.style.display = "block";
-          chatBubble.style.display = "none";
-        } else {
-          chatbotWindow.style.display = "none";
-          chatBubble.style.display = "block";
-        }
+        chatbotWindow.style.display = chatbotWindow.style.display === "none" ? "block" : "none";
+      });
+
+      chatBubble.addEventListener("click", function () {
+        chatbotWindow.style.display = "block";
       });
     });
   </script>
