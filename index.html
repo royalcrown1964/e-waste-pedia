@@ -10,7 +10,7 @@
       font-family: 'Poppins', sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(135deg, #f4f7fc, #3498db, #9b59b6); /* Gradient mix */
+      background: linear-gradient(135deg, #f4f7fc, #3498db, #9b59b6);
       color: #333;
       display: flex;
       justify-content: center;
@@ -18,7 +18,6 @@
       min-height: 100vh;
       flex-direction: column;
     }
-
     header {
       text-align: center;
       margin-bottom: 40px;
@@ -49,39 +48,9 @@
     button:hover {
       background-color: #1e6391;
     }
-    .question {
-      margin-bottom: 20px;
-    }
-    .question p {
-      font-weight: 500;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-    .question label {
-      display: block;
-      padding: 8px;
-      background-color: #ecf0f1;
-      border-radius: 5px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-    .question label:hover {
-      background-color: #bdc3c7;
-    }
-    .result-section p {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    .result-section .corrections {
-      background: #f9ebcc;
-      padding: 15px;
-      border-radius: 5px;
-    }
     .chatbot-icon {
       position: fixed;
-      bottom: 100px; /* Adjusted position for the chat bubble */
+      bottom: 20px;
       left: 20px;
       width: 60px;
       height: 60px;
@@ -93,19 +62,6 @@
       align-items: center;
       cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    }
-    .chatbot-bubble {
-      position: fixed;
-      bottom: 20px; /* Position at the bottom */
-      left: 20px;
-      background-color: #3498db;
-      color: #fff;
-      padding: 10px 15px;
-      border-radius: 25px;
-      font-size: 14px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      display: none; /* Initially hidden */
-      cursor: default;
     }
     .chatbot-window {
       position: fixed;
@@ -124,14 +80,59 @@
       border: none;
       border-radius: 10px;
     }
-
-    .credit-text {
+    .chat-bubble {
       position: fixed;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 12px;
+      bottom: 90px;
+      left: 20px;
+      background-color: #3498db;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.5s ease;
+    }
+    .chat-bubble:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 20px;
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 10px solid #3498db;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .credits-section {
+      width: 80%;
+      max-width: 700px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+      text-align: left;
+    }
+    .credits-section h2 {
+      margin-bottom: 15px;
+      font-size: 24px;
+      color: #2c3e50;
+    }
+    .credits-section p {
+      margin: 10px 0;
+      font-size: 16px;
+      color: #333;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -144,7 +145,7 @@
 
   <div id="video-section">
     <video width="100%" controls>
-      <source src="e waste eplaination video.mp4" type="video/mp4">
+      <source src="your-video.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
   </div>
@@ -162,64 +163,113 @@
 
   <!-- Chatbot -->
   <div id="chatbot-icon" class="chatbot-icon">💬</div>
-  <div id="chatbot-bubble" class="chatbot-bubble">Any doubts? Use me!</div>
+  <div id="chat-bubble" class="chat-bubble">Any doubts? I can help!</div>
   <div id="chatbot-window" class="chatbot-window">
-    <iframe id="chatbot-iframe" src="" frameborder="0"></iframe>
+    <iframe id="chatbot-iframe" src="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/01/02/06/20250102062021-KVX0PB05.json" frameborder="0"></iframe>
   </div>
 
-  <div class="credit-text">Brains behind this project: 1. Sutirtho Ghosh (India) 2. Trisha Gupta (India) 3. Adyashish Biswas (India)</div>
+  <!-- Brains Behind This Project -->
+  <div class="credits-section">
+    <h2>Brains Behind This Project</h2>
+    <p><strong>Sutirtho Ghosho</strong> (India): A visionary mind with deep insights into sustainable technology and environmental impact.</p>
+    <p><strong>Trisha Gupta</strong> (India): A talented individual with expertise in design, research, and innovation.</p>
+    <p><strong>Adyashish Biswas</strong> (India): A creative thinker with a strong passion for technological advancements in eco-friendly solutions.</p>
+  </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       const startQuizBtn = document.getElementById("start-quiz-btn");
       const quizSection = document.getElementById("quiz-section");
+      const videoSection = document.getElementById("video-section");
+      const submitQuizBtn = document.getElementById("submit-quiz-btn");
       const resultSection = document.getElementById("result-section");
       const quizContainer = document.getElementById("quiz-container");
-      const submitQuizBtn = document.getElementById("submit-quiz-btn");
       const scoreElement = document.getElementById("score");
       const correctionsElement = document.getElementById("corrections");
       const chatbotIcon = document.getElementById("chatbot-icon");
       const chatbotWindow = document.getElementById("chatbot-window");
-      const chatbotBubble = document.getElementById("chatbot-bubble");
-      const chatbotIframe = document.getElementById("chatbot-iframe");
+      const chatBubble = document.getElementById("chat-bubble");
 
-      // Quiz data (25 questions about E-Waste)
+      // Load quiz questions dynamically
       const questions = [
         { question: "What is E-Waste?", options: ["Electronic waste", "Electric waste", "Electronics", "None of these"], correct: 0 },
         { question: "How can we dispose of E-Waste safely?", options: ["Burn it", "Recycle it", "Throw it in a landfill", "Ignore it"], correct: 1 },
-        // Add other quiz questions here
+        { question: "What can be recycled from E-Waste?", options: ["Plastic", "Gold", "Batteries", "All of the above"], correct: 3 },
+        { question: "Why is E-Waste harmful?", options: ["It pollutes the environment", "It releases harmful chemicals", "It can cause health issues", "All of the above"], correct: 3 },
+        { question: "What is the main component of E-Waste?", options: ["Metals", "Plastic", "Glass", "All of the above"], correct: 3 },
+        { question: "Which of the following is NOT a form of E-Waste?", options: ["Old TVs", "Batteries", "Plastic bottles", "Old computers"], correct: 2 },
+        { question: "How often should you dispose of E-Waste?", options: ["Every year", "When it breaks down", "When you upgrade", "All of the above"], correct: 3 },
+        { question: "Which of the following is the most common hazardous substance found in E-Waste?", options: ["Lead", "Mercury", "Arsenic", "Cadmium"], correct: 0 },
+        { question: "Which country is known for its strict E-Waste management regulations?", options: ["USA", "China", "Japan", "Germany"], correct: 3 },
+        { question: "What is the main environmental threat posed by E-Waste?", options: ["Air pollution", "Water contamination", "Soil degradation", "All of the above"], correct: 3 },
       ];
 
-      function loadQuestions() {
-        quizContainer.innerHTML = '';
-        questions.forEach((q, index) => {
-          const questionElement = document.createElement('div');
-          questionElement.classList.add('question');
-          questionElement.innerHTML = `
-            <p>${q.question}</p>
-            ${q.options.map((option, i) => `
-              <label>
-                <input type="radio" name="question-${index}" value="${i}"> ${option}
-              </label>
-            `).join('')}
-          `;
-          quizContainer.appendChild(questionElement);
-        });
-      }
+      let currentQuestionIndex = 0;
+      let userAnswers = [];
 
-      function showChatbotWindow() {
-        chatbotWindow.style.display = 'block';
-        chatbotBubble.style.display = 'none';  // Hide the bubble when the chat window opens
-      }
-
-      chatbotIcon.addEventListener("click", showChatbotWindow);
-
-      // Hide chatbot bubble and window after quiz starts
-      startQuizBtn.addEventListener("click", function() {
-        chatbotBubble.style.display = 'none';  // Hide the bubble when the quiz starts
+      // Start quiz
+      startQuizBtn.addEventListener("click", function () {
+        startQuizBtn.classList.add("hidden");
+        videoSection.classList.add("hidden");
+        quizSection.classList.remove("hidden");
+        displayQuestion(currentQuestionIndex);
       });
-      
-      loadQuestions();
+
+      // Display question and options
+      function displayQuestion(index) {
+        const question = questions[index];
+        const questionElement = document.createElement("div");
+        questionElement.innerHTML = `
+          <p>${question.question}</p>
+          <div>
+            ${question.options
+              .map(
+                (option, i) =>
+                  `<label><input type="radio" name="question${index}" value="${i}"> ${option}</label><br>`
+              )
+              .join("")}
+          </div>
+        `;
+        quizContainer.innerHTML = "";
+        quizContainer.appendChild(questionElement);
+      }
+
+      // Submit quiz
+      submitQuizBtn.addEventListener("click", function () {
+        const answers = Array.from(document.querySelectorAll("input[type='radio']:checked")).map(
+          (radio) => parseInt(radio.value)
+        );
+        userAnswers = answers;
+
+        let score = 0;
+        let corrections = [];
+
+        questions.forEach((question, index) => {
+          if (userAnswers[index] === question.correct) {
+            score++;
+          } else {
+            corrections.push(
+              `Question ${index + 1}: Correct answer is "${question.options[question.correct]}" `
+            );
+          }
+        });
+
+        scoreElement.innerHTML = `You scored ${score} out of ${questions.length}`;
+        correctionsElement.innerHTML = corrections.join("<br>");
+        quizSection.classList.add("hidden");
+        resultSection.classList.remove("hidden");
+      });
+
+      // Toggle chatbot
+      chatbotIcon.addEventListener("click", function () {
+        if (chatbotWindow.style.display === "none" || chatbotWindow.style.display === "") {
+          chatbotWindow.style.display = "block";
+          chatBubble.style.display = "none";
+        } else {
+          chatbotWindow.style.display = "none";
+          chatBubble.style.display = "block";
+        }
+      });
     });
   </script>
 </body>
